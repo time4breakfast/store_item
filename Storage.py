@@ -3,7 +3,7 @@
 
 import sqlite3
 from sqlite3 import Error
-import pandas as pd
+#import pandas as pd
 #import gKeep
 
 class Storage:
@@ -11,8 +11,12 @@ class Storage:
     def __init__(self):
         print("Connecting to database")
         self.cols = ['product', 'least', 'reorder', 'mhd', 'quantity', 'storageplace']
-        self.df = pd.DataFrame(columns = self.cols)
+        self.df = 'test' #pd.DataFrame(columns = self.cols)
         self.stoplc = {'1':'first place'}
+
+    def testing_dummy_function(self, intent):
+        print("This is a test")
+        return str(intent)
 
     def createEmptyTable(self):
         # create table
@@ -35,8 +39,8 @@ class Storage:
             conn = sqlite3.connect(db_name)
             cur = conn.cursor()
             res = cur.execute("SELECT * FROM " + tablename)
-            self.df = pd.DataFrame(res.fetchall())
-            self.df.columns = self.cols
+            #self.df = pd.DataFrame(res.fetchall())
+            #self.df.columns = self.cols
             conn.close()
             return self.df
         except Error as e:

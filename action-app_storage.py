@@ -42,7 +42,7 @@ class Storageassistant(object):
 
         # action code goes here...
         answer = "Guten Tag"
-        answer = sto.addEntryToVorraete(intent_message.intent)
+        answer = sto.testing_dummy_function() #addEntryToVorraete(intent_message.intent)
 
         # if need to speak the execution result by tts
         hermes.publish_start_session_notification(intent_message.site_id, answer, "Storage_APP")
