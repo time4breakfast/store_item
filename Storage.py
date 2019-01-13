@@ -16,7 +16,7 @@ class Storage:
 
     def testing_dummy_function(self, intent):
         print("This is a test")
-        item_list = [item.value.encode('utf8') for item in intent.slots.item.all()][0]
+        item_list = intent.slots.value # [item.value.encode('utf8') for item in intent.slots.item.all()][0]
         return str(item_list)
 
     def createEmptyTable(self):
