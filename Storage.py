@@ -50,18 +50,18 @@ class Storage:
 
     def getAmountOf(self, intent):
         # get item
-        item = [item.value.encode('utf8') for item in intent.slots.item.all()][0]
-        item = item.lower()
+        #itemlist = [item.value.encode('utf8') for item in intent.slots.item.all()][0]
+        #item = itemlist
 
-        conn = sqlite3.connect('vorraete.db')
-        cur = conn.cursor()
-        result = cur.execute("""SELECT quantity FROM vorraete where product = '""" + item + """'""")
-        amount = result.fetchall()[0][0]
+        #conn = sqlite3.connect('vorraete.db')
+        #cur = conn.cursor()
+        #result = cur.execute("""SELECT quantity FROM vorraete where product = '""" + item + """'""")
+        #amount = result.fetchall()[0][0]
 
-        cur.close()
-        del cur
-        conn.close()
-        return str(amount)
+        #cur.close()
+        #del cur
+        #conn.close()
+        return intent
 
     # add entry to database
     def addEntryToVorraete(self, item, amount = 1, moreOrLess = True, stoplc = 0, least = 1, reorder = 0, mhd = None):
