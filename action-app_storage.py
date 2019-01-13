@@ -5,7 +5,7 @@ import requests
 from snipsTools import SnipsConfigParser
 from hermes_python.hermes import Hermes
 from hermes_python.ontology import *
-from Storage import Storage as sto
+import Storage as sto
 import io
 
 CONFIG_INI = "config.ini"
@@ -28,6 +28,8 @@ class Storageassistant(object):
         # get the configuration if needed
         try:
             self.config = SnipsConfigParser.read_configuration_file(CONFIG_INI)
+            self.mystorage = sto.Storage()
+            self.mystorage.getDataFrameFromDB('vorraete.db')
         except :
             self.config = None
 
@@ -42,13 +44,13 @@ class Storageassistant(object):
 
         # action code goes here...
         answer = "Guten Tag"
-        answer = sto.testing_dummy_function() #addEntryToVorraete(intent_message.intent)
+        answer = self.mystorage.testing_dummy_function(intent_message.intent) #addEntryToVorraete(intent_message.intent)
 
         # if need to speak the execution result by tts
         hermes.publish_start_session_notification(intent_message.site_id, answer, "Storage_APP")
 
     def deleteitem_callback(self, hermes, intent_message):
-        # terminate the session first if not continue
+        # terminate the session first if not continuechanged 'hello world' into 'guten tag'
     	hermes.publish_end_session(intent_message.session_id, "")
 
         # action code goes here...
