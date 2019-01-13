@@ -29,7 +29,6 @@ class Storageassistant(object):
         try:
             self.config = SnipsConfigParser.read_configuration_file(CONFIG_INI)
             self.mystorage = sto.Storage()
-            self.mystorage.getDataFrameFromDB('vorraete.db')
         except :
             self.config = None
 
@@ -43,8 +42,7 @@ class Storageassistant(object):
     	hermes.publish_end_session(intent_message.session_id, "")
 
         # action code goes here...
-        answer = "Guten Tag"
-        answer = self.mystorage.testing_dummy_function(intent_message.intent) #addEntryToVorraete(intent_message.intent)
+        answer = self.mystorage.testing_dummy_function(intent_message) #addEntryToVorraete(intent_message.intent)
 
         # if need to speak the execution result by tts
         hermes.publish_start_session_notification(intent_message.site_id, answer, "Storage_APP")
@@ -59,13 +57,25 @@ class Storageassistant(object):
         # if need to speak the execution result by tts
         hermes.publish_start_session_notification(intent_message.site_id, answer, "Storage_APP")
 
+    def checkamountofitem_callback(self, hermes, intent_message):
+        # terminate the session first if not continue
+    	hermes.publish_end_session(intent_message.session_id, "")
+
+        # action code goes here...
+        answer = self.mystorage.getAmountOf(intent_message) #addEntryToVorraete(intent_message.intent)
+
+        # if need to speak the execution result by tts
+        hermes.publish_start_session_notification(intent_message.site_id, answer, "Storage_APP")
+
     # --> Master callback function, triggered everytime an intent is recognized
-    def master_intent_callback(self,hermes, intent_message):
+    def master_intent_callback(self, hermes, intent_message):
         coming_intent = intent_message.intent.intent_name
         if coming_intent == 'time4breakfast:addItemToStorage':
             self.additem_callback(hermes, intent_message)
         elif coming_intent == '':
             self.deleteitem_callback(hermes, intent_message)
+        elif coming_intent == 'time4breakfast:getAmountOfItem':
+            self.checkamountofitem_callback(hermes, intent_message)
 
         # more callback and if condition goes here...
 
@@ -76,4 +86,3 @@ class Storageassistant(object):
 
 if __name__ == "__main__":
     Storageassistant()
-    sto.getDataFrameFromDB('vorraete.db')
