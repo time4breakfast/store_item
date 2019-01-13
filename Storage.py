@@ -3,7 +3,7 @@
 
 import sqlite3
 from sqlite3 import Error
-#import pandas as pd
+import pandas as pd
 #import gKeep
 
 class Storage:
@@ -11,12 +11,13 @@ class Storage:
     def __init__(self):
         print("Connecting to database")
         self.cols = ['product', 'least', 'reorder', 'mhd', 'quantity', 'storageplace']
-        self.df = 'test' #pd.DataFrame(columns = self.cols)
+        self.df = pd.DataFrame(columns = self.cols)
         self.stoplc = {'1':'first place'}
 
     def testing_dummy_function(self, intent):
         print("This is a test")
-        return str(intent)
+        item_list = [item.value.encode('utf8') for item in intent.slots.item.all()][0]
+        return str(item_list)
 
     def createEmptyTable(self):
         # create table
@@ -39,12 +40,18 @@ class Storage:
             conn = sqlite3.connect(db_name)
             cur = conn.cursor()
             res = cur.execute("SELECT * FROM " + tablename)
-            #self.df = pd.DataFrame(res.fetchall())
-            #self.df.columns = self.cols
+            self.df = pd.DataFrame(res.fetchall())
+            self.df.columns = self.cols
             conn.close()
             return self.df
         except Error as e:
             print(e)
+
+    def getAmountOf(self, intent):
+        # get item
+        item = [item.value.encode('utf8') for item in intent.slots.item.all()][0]
+        tempdf = self.df[self.df['product'] == str(item).lower()]
+        return str(tempdf.shape[0])
 
     # add entry to database
     def addEntryToVorraete(self, item, amount = 1, moreOrLess = True, stoplc = 0, least = 1, reorder = 0, mhd = None):
