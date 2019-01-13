@@ -18,6 +18,7 @@ MQTT_PORT = 1883
 MQTT_ADDR = "{}:{}".format(MQTT_IP_ADDR, str(MQTT_PORT))
 
 
+# noinspection PyPackageRequirements
 class Storageassistant(object):
     """Class used to wrap action code with mqtt connection
         Please change the name refering to your application
@@ -40,7 +41,7 @@ class Storageassistant(object):
     	hermes.publish_end_session(intent_message.session_id, "")
 
         # action code goes here...
-        answer = "Hello world"
+        answer = "Guten Tag"
         answer = sto.addEntryToVorraete(intent_message.intent)
 
         # if need to speak the execution result by tts
@@ -51,7 +52,7 @@ class Storageassistant(object):
     	hermes.publish_end_session(intent_message.session_id, "")
 
         # action code goes here...
-        answer = "Hello world"
+        answer = "Guten Tag"
 
         # if need to speak the execution result by tts
         hermes.publish_start_session_notification(intent_message.site_id, answer, "Storage_APP")
