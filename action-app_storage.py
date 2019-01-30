@@ -42,8 +42,8 @@ class Storageassistant(object):
         hermes.publish_end_session(intent_message.session_id, "")
 
         # action code goes here...
-        answer = self.mystorage.testing_dummy_function(intent_message.intent) #addEntryToVorraete(intent_message.intent)
-
+        # answer = self.mystorage.testing_dummy_function(intent_message.intent) #addEntryToVorraete(intent_message.intent)
+        answer = "hinzufügen"
         # if need to speak the execution result by tts
         hermes.publish_start_session_notification(intent_message.site_id, answer, "Storage_APP")
 
@@ -63,7 +63,8 @@ class Storageassistant(object):
 
         # action code goes here...
         # answer = self.mystorage.getAmountOf(intent_message)
-        answer = self.mystorage.testing_dummy_function(intent_message.intent)
+        # answer = self.mystorage.testing_dummy_function(intent_message.intent)
+        answer = "Wieviel"
 
         # if need to speak the execution result by tts
         hermes.publish_start_session_notification(intent_message.site_id, answer, "Storage_APP")
