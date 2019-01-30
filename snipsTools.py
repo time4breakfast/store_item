@@ -1,9 +1,11 @@
-import ConfigParser
+#!/usr/bin/env python3
+
+import configparser
 import io
 
 CONFIGURATION_ENCODING_FORMAT = "utf-8"
 
-class SnipsConfigParser(ConfigParser.SafeConfigParser):
+class SnipsConfigParser(configparser.SafeConfigParser):
     def to_dict(self):
         return {section: {option_name : option for option_name, option in self.items(section)} for section in self.sections()}
 
@@ -14,7 +16,7 @@ class SnipsConfigParser(ConfigParser.SafeConfigParser):
                 conf_parser = SnipsConfigParser()
                 conf_parser.readfp(f)
                 return conf_parser.to_dict()
-        except (IOError, ConfigParser.Error) as e:
+        except (IOError, configparser.Error) as e:
             print(e)
             return dict()
 
@@ -29,7 +31,7 @@ class SnipsConfigParser(ConfigParser.SafeConfigParser):
             with open(configuration_file, 'w') as f:
                 conf_parser.write(f)
                 return True
-        except (IOError, ConfigParser.Error) as e:
+        except (IOError, configparser.Error) as e:
             print(e)
             return False
 
