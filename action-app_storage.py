@@ -39,7 +39,7 @@ class Storageassistant(object):
     # --> Sub callback function, one per intent
     def additem_callback(self, hermes, intent_message):
         # terminate the session first if not continue
-    	hermes.publish_end_session(intent_message.session_id, "")
+        hermes.publish_end_session(intent_message.session_id, "")
 
         # action code goes here...
         answer = self.mystorage.testing_dummy_function(intent_message) #addEntryToVorraete(intent_message.intent)
@@ -49,7 +49,7 @@ class Storageassistant(object):
 
     def deleteitem_callback(self, hermes, intent_message):
         # terminate the session first if not continuechanged 'hello world' into 'guten tag'
-    	hermes.publish_end_session(intent_message.session_id, "")
+        hermes.publish_end_session(intent_message.session_id, "")
 
         # action code goes here...
         answer = "Guten Tag"
@@ -59,10 +59,10 @@ class Storageassistant(object):
 
     def checkamountofitem_callback(self, hermes, intent_message):
         # terminate the session first if not continue
-    	hermes.publish_end_session(intent_message.session_id, "")
+        hermes.publish_end_session(intent_message.session_id, "")
 
         # action code goes here...
-        #answer = self.mystorage.getAmountOf(intent_message)
+        # answer = self.mystorage.getAmountOf(intent_message)
         answer = self.mystorage.testing_dummy_function(intent_message)
 
         # if need to speak the execution result by tts
