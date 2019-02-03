@@ -5,6 +5,7 @@ import sqlite3
 from sqlite3 import Error
 #import pandas as pd
 #import gKeep
+import logging
 
 class Storage:
 
@@ -15,10 +16,16 @@ class Storage:
         self.stoplc = {'1':'first place'}
 
     def testing_dummy_function(self, intent):
-        print(intent)
-        item = intent.get('slots')[0].get('value').get('value').lower()
 
-        item = [item.value.encode('utf8') for item in intent.slots.item.all()][0]
+        #logging.basicConfig(filename = 'example.log', level = logging.DEBUG)
+        #logging.debug('This message should go to the log file')
+        #logging.info('So should this')
+        #logging.warning('And this, too')
+        print(intent)
+        #item_list = intent.slots.value
+        #item = intent.get('slots')[0].get('value').get('value').lower()
+
+        #item = [item.value.encode('utf8') for item in intent.slots.item.all()][0]
         return "Hallo"
 
     def createEmptyTable(self):
