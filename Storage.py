@@ -15,9 +15,12 @@ class Storage:
         self.stoplc = {'1':'first place'}
 
     def testing_dummy_function(self, intent):
-        print(intent)
-        item = intent.intent.intent_name
-        # item = [item.value.encode('utf8') for item in intent.intent.slots.item.all()][0]
+        #logging.warning(intent)
+        # item = intent.slots.value
+        # item = [item.value for item in intent.slots.item.all()]
+        item = intent.slots.value.first().value
+        print("item slot is: ")
+        print(item)
         return "Hallo"
 
     def createEmptyTable(self):
