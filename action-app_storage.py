@@ -28,10 +28,11 @@ def subscribe_intent_callback(hermes, intent_message):
     intentname = intent_message.intent.intent_name
     if intentname == user_intent("addItemToStorage"):
         #result_sentence = shoppinglist.add_item(intent_message)
-        item = intent.slots[0]
-        #item = [item.value for item in intent_message.slots.item.all()]
-        print(item)
-        result_sentence = 'Hallo'
+        print("####### getting intent #########")
+        # item = intent_message.slots[0].value
+        item = [item.value for item in intent_message.slots.item.all()][0]
+        print(str(item))
+        result_sentence = item #'Hallo'
         hermes.publish_end_session(intent_message.session_id, result_sentence)
 
 
