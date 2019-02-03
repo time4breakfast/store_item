@@ -14,14 +14,9 @@ class Storage:
         self.df = 'test' #pd.DataFrame(columns = self.cols)
         self.stoplc = {'1':'first place'}
 
-    def testing_dummy_function(self, intent):
-        #logging.warning(intent)
-        # item = intent.slots.value
-        # item = [item.value for item in intent.slots.item.all()]
-        item = intent.slots.value.first().value
-        print("item slot is: ")
-        print(item)
-        return "Hallo"
+    def testing_dummy_function(self, intent_message):
+        item = [item.value for item in intent_message.slots.item.all()][0]
+        return item
 
     def createEmptyTable(self):
         # create table

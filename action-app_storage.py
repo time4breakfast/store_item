@@ -3,7 +3,7 @@
 
 from hermes_python.hermes import Hermes
 # import io
-# import Storage as sto
+from Storage import Storage
 
 USERNAME_INTENTS = "time4breakfast"
 
@@ -27,15 +27,14 @@ def subscribe_intent_callback(hermes, intent_message):
     # conf = read_configuration_file(CONFIG_INI)
     intentname = intent_message.intent.intent_name
     if intentname == user_intent("addItemToStorage"):
-        #result_sentence = shoppinglist.add_item(intent_message)
-        print("####### getting intent #########")
-        # item = intent_message.slots[0].value
-        item = [item.value for item in intent_message.slots.item.all()][0]
-        print(str(item))
-        result_sentence = item #'Hallo'
+        result_sentence = mystorage.testing_dummy_function(intent_message)
+        # item = [item.value for item in intent_message.slots.item.all()][0]
+        # print(str(item))
+        # result_sentence = item #'Hallo'
         hermes.publish_end_session(intent_message.session_id, result_sentence)
 
 
 if __name__ == "__main__":
+    mystorage = Storage()
     with Hermes("localhost:1883") as h:
         h.subscribe_intents(subscribe_intent_callback).start()
