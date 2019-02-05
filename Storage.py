@@ -35,16 +35,16 @@ class Storage:
 
     def getAmountOf(self, intent_message):
         # get item
-        item = [item.value for item in intent_message.slots.item.all()][0]
-        amount = 3
-        # conn = sqlite3.connect('vorraete.db')
-        # cur = conn.cursor()
-        # result = cur.execute("""SELECT quantity FROM vorraete where product = '""" + item + """'""")
-        # amount = result.fetchall()[0][0]
+        item = [item.value for item in intent_message.slots.Menge.all()][0]
+        # amount = 3
+        conn = sqlite3.connect('vorraete.db')
+        cur = conn.cursor()
+        result = cur.execute("""SELECT quantity FROM vorraete where product = '""" + item + """'""")
+        amount = result.fetchall()[0][0]
 
-        # cur.close()
-        # del cur
-        # conn.close()
+        cur.close()
+        del cur
+        conn.close()
         return self.makeresultsentence('getAmountOf', item, amount)
 
     # add entry to database
@@ -88,9 +88,9 @@ class Storage:
     def makeresultsentence(self, caller, item, amount = None):
         resultsentence = 'Die Antwort ist leer.'
         if caller == 'getAmountOf':
-            resultsentence = "Wir haben noch " + str(amount) + item
+            resultsentence = "Wir haben noch " + str(amount) + " " + item
         elif caller == 'addEntryToVorraete':
-            resultsentence = "Ich habe " + str(item) + "hinzugefügt."
+            resultsentence = "Ich habe " + str(item) + " hinzugefügt."
         elif caller == 'deleteItemFromVorraete':
             resultsentence = 'Ich habe ' + item + 'aus dem Vorrat gelöscht'
         return resultsentence
