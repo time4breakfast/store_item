@@ -3,7 +3,6 @@
 
 import sqlite3
 from sqlite3 import Error
-#import pandas as pd
 #import gKeep
 
 class Storage:
@@ -34,36 +33,22 @@ class Storage:
         del cur
         conn.close()
 
-    def getDataFrameFromDB(self, db_name, tablename = 'vorraete'):
-        try:
-            conn = sqlite3.connect(db_name)
-            cur = conn.cursor()
-            res = cur.execute("SELECT * FROM " + tablename)
-            #self.df = pd.DataFrame(res.fetchall())
-            #self.df.columns = self.cols
-            conn.close()
-            return self.df
-        except Error as e:
-            print(e)
-
-    def getAmountOf(self, intent):
+    def getAmountOf(self, intent_message):
         # get item
-        print(intent)
-        #itemlist = [item.value.encode('utf8') for item in intent.slots.item.all()][0]
-        #item = itemlist
+        item = [item.value for item in intent_message.slots.item.all()][0]
+        amount = 3
+        # conn = sqlite3.connect('vorraete.db')
+        # cur = conn.cursor()
+        # result = cur.execute("""SELECT quantity FROM vorraete where product = '""" + item + """'""")
+        # amount = result.fetchall()[0][0]
 
-        #conn = sqlite3.connect('vorraete.db')
-        #cur = conn.cursor()
-        #result = cur.execute("""SELECT quantity FROM vorraete where product = '""" + item + """'""")
-        #amount = result.fetchall()[0][0]
-
-        #cur.close()
-        #del cur
-        #conn.close()
-        return intent
+        # cur.close()
+        # del cur
+        # conn.close()
+        return self.makeresultsentence('getAmountOf', item, amount)
 
     # add entry to database
-    def addEntryToVorraete(self, item, amount = 1, moreOrLess = True, stoplc = 0, least = 1, reorder = 0, mhd = None):
+    def addEntryToVorraete(self, intent_message, amount = 1, moreOrLess = True, stoplc = 0, least = 1, reorder = 0, mhd = None):
         """
         Add a new entry
         :param item: Name of the entry, e.g. Tomaten, Spaghetti
@@ -74,76 +59,38 @@ class Storage:
         :return:
         """
 
-        self.df = self.df.reset_index(drop = True)
-
         # check if item is already in storage and if yes get its index
-        tempdf = self.df[self.df['product'] == str(item).lower()]
-        if tempdf.shape[0] > 0:
-            idx = tempdf.index[0]
-            item = str(item).lower()
-
-            # get current amount and add to shoppinglist if necessary
-            cur_amount = tempdf[tempdf['product'] == item]['quantity'].iloc[0]
-            least = tempdf[tempdf['product'] == item]['least'].iloc[0]
-            if cur_amount < least:
-                amount = least - cur_amount + 1
-                #gKeep.gKeep.addItemToShoppingList(item, amount)
-
-            # update db entry
-            if moreOrLess:
-                self.df['quantity'][idx] += int(amount)
-            else:
-                self.df['quantity'][idx] -= int(amount)
-            if mhd:
-                print("you still need to implement this")
-
-            try:
-                conn = sqlite3.connect('vorraete.db')
-                #tdf = tdf.drop(columns=['id'])
-                tdf = self.df.reset_index(drop = True)
-                tdf.to_sql('vorraete', conn, if_exists = 'replace', index = False)
-                conn.close()
-                print('changed quantity of ' + str(item) + " by " + str(amount))
-            except Error as e:
-                print(e)
-            return self.df
-        else:
-            _id = self.df.shape[0] + 1
-            item = str(item).lower()
-
-            # self.df = self.df.append(pd.DataFrame([[_id, item, least, reorder, mhd, amount, stoplc]], columns = self.cols))
-            #self.df = self.df.append(pd.DataFrame([[item, least, reorder, mhd, amount, stoplc]], columns=self.cols))
-            self.df = self.df.reset_index(drop=True)
-            # tdf = self.df.drop(columns=['id'])
-            try:
-                conn = sqlite3.connect('vorraete.db')
-                self.df.to_sql('vorraete', conn, if_exists='replace', index=False)
-                print("Added " + str(item) + " to storage.")
-                conn.close()
-            except Error as e:
-                print(e)
+        item = [item.value for item in intent_message.slots.item.all()][0]
+        # conn = sqlite3.connect('vorraete.db')
+        # cur = conn.cursor()
+        # result = cur.execute("""SELECT quantity FROM vorraete where product = '""" + item + """'""")
+        # amount = result.fetchall()[0][0]
+        # if amount != 0:
+        #     # update db entry by 1
+        #     amount += 1
+        #     with conn:
+        #         cur.execute("""UPDATE vorraete SET quantity = '""" + str(amount) + """' WHERE product = '""" + item + """'""")
+        # cur.close()
+        # del cur
+        # conn.close()
+        return self.makeresultsentence('addEntryToVorraete', item)
 
     # delete entry from database
-    def deleteItemFromVorraete(self, item):
+    def deleteItemFromVorraete(self, intent_message):
         """
         if an entry should be deleted for good
         :param item:
         :return:
         """
-        tempdf = self.df[self.df['product'] == str(item).lower()]
-        if tempdf.shape[0] > 0:
-            idx = tempdf.index[0]
-            item = str(item).lower()
+        item = [item.value for item in intent_message.slots.item.all()][0]
+        return self.makeresultsentence('deleteItemFromVorraete', item)
 
-            try:
-                self.df = self.df.drop(axis=0, index=idx)
-                self.df = self.df.reset_index(drop=True)
-                #tdf = self.df.drop(columns=['id'])
-                conn = sqlite3.connect('vorraete.db')
-                self.df.to_sql('vorraete', conn, if_exists='replace', index=False)
-                conn.close()
-            except Error as e:
-                print(e)
-            return self.df
-        else:
-            return "Could not locate item."
+    def makeresultsentence(self, caller, item, amount = None):
+        resultsentence = 'Die Antwort ist leer.'
+        if caller == 'getAmountOf':
+            resultsentence = "Wir haben noch " + str(amount) + item
+        elif caller == 'addEntryToVorraete':
+            resultsentence = "Ich habe " + str(item) + "hinzugefügt."
+        elif caller == 'deleteItemFromVorraete':
+            resultsentence = 'Ich habe ' + item + 'aus dem Vorrat gelöscht'
+        return resultsentence

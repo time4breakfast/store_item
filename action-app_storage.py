@@ -27,12 +27,16 @@ def subscribe_intent_callback(hermes, intent_message):
     # conf = read_configuration_file(CONFIG_INI)
     intentname = intent_message.intent.intent_name
     if intentname == user_intent("addItemToStorage"):
-        result_sentence = mystorage.testing_dummy_function(intent_message)
-        # item = [item.value for item in intent_message.slots.item.all()][0]
-        # print(str(item))
-        # result_sentence = item #'Hallo'
+        result_sentence = mystorage.addEntryToVorraete(intent_message)
         hermes.publish_end_session(intent_message.session_id, result_sentence)
 
+    elif intentname == user_intent("getAmountOfItem"):
+        result_sentence = mystorage.getAmountOf(intent_message)
+        hermes.publish_end_session(intent_message.session_id, result_sentence)
+
+    elif intentname == user_intent("removeItemFromStorage"):
+        result_sentence = mystorage.deleteItemFromVorraete(intent_message)
+        hermes.publish_end_session(intent_message.session_id, result_sentence)
 
 if __name__ == "__main__":
     mystorage = Storage()
