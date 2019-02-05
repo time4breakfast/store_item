@@ -36,10 +36,9 @@ class Storage:
     def getAmountOf(self, intent_message):
         # get item
         item = [item.value for item in intent_message.slots.Menge.all()][0]
-        # amount = 3
         conn = sqlite3.connect('vorraete.db')
         cur = conn.cursor()
-        result = cur.execute("""SELECT quantity FROM vorraete where product = '""" + item + """'""")
+        result = cur.execute("""SELECT quantity FROM vorraete where product = '""" + item.lower() + """'""")
         amount = result.fetchall()[0][0]
 
         cur.close()
@@ -61,18 +60,18 @@ class Storage:
 
         # check if item is already in storage and if yes get its index
         item = [item.value for item in intent_message.slots.item.all()][0]
-        # conn = sqlite3.connect('vorraete.db')
-        # cur = conn.cursor()
-        # result = cur.execute("""SELECT quantity FROM vorraete where product = '""" + item + """'""")
-        # amount = result.fetchall()[0][0]
-        # if amount != 0:
-        #     # update db entry by 1
-        #     amount += 1
-        #     with conn:
-        #         cur.execute("""UPDATE vorraete SET quantity = '""" + str(amount) + """' WHERE product = '""" + item + """'""")
-        # cur.close()
-        # del cur
-        # conn.close()
+        conn = sqlite3.connect('vorraete.db')
+        cur = conn.cursor()
+        result = cur.execute("""SELECT quantity FROM vorraete where product = '""" + item + """'""")
+        amount = result.fetchall()[0][0]
+        if amount != 0:
+            # update db entry by 1
+            amount += 1
+            with conn:
+                cur.execute("""UPDATE vorraete SET quantity = '""" + str(amount) + """' WHERE product = '""" + item + """'""")
+        cur.close()
+        del cur
+        conn.close()
         return self.makeresultsentence('addEntryToVorraete', item)
 
     # delete entry from database
