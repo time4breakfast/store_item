@@ -68,13 +68,13 @@ class Storage:
             # update db entry by 1
             amount += 1
             with conn:
-                cur.execute("""UPDATE vorraete SET quantity = '""" + str(
-          except:
+                cur.execute("""UPDATE vorraete SET quantity = '""" + str(amount) + """' WHERE product = '""" + item.lower() + """'""")
+        except:
             # create a new db entry
             amount = 1
             with conn:
                 cur.execute("""INSERT INTO vorraete (product, least, reorder, mhd, quantity, storageplace) 
-                               VALUES ('""" + item.lower() + """', 1, 0, '01.01.2020', """ + str(amount) + """, 0);""")
+                                 VALUES ('""" + item.lower() + """', 1, 0, '01.01.2020', """ + str(amount) + """, 0);""")
 
         cur.close()
         del cur
