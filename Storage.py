@@ -62,13 +62,20 @@ class Storage:
         item = [item.value for item in intent_message.slots.item.all()][0]
         conn = sqlite3.connect('vorraete.db')
         cur = conn.cursor()
-        result = cur.execute("""SELECT quantity FROM vorraete where product = '""" + item + """'""")
-        amount = result.fetchall()[0][0]
-        if amount != 0:
+        result = cur.execute("""SELECT quantity FROM vorraete where product = '""" + item.lower() + """'""")
+        try:
+            amount = result.fetchall()[0][0]
             # update db entry by 1
             amount += 1
             with conn:
-                cur.execute("""UPDATE vorraete SET quantity = '""" + str(amount) + """' WHERE product = '""" + item + """'""")
+                cur.execute("""UPDATE vorraete SET quantity = '""" + str(
+          except:
+            # create a new db entry
+            amount = 1
+            with conn:
+                cur.execute("""INSERT INTO vorraete (product, least, reorder, mhd, quantity, storageplace) 
+                               VALUES ('""" + item.lower() + """', 1, 0, '01.01.2020', """ + str(amount) + """, 0);""")
+
         cur.close()
         del cur
         conn.close()
