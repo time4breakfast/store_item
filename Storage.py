@@ -36,14 +36,15 @@ class Storage:
     def getAmountOf(self, intent_message):
         # get item
         item = [item.value for item in intent_message.slots.Menge.all()][0]
+
         conn = sqlite3.connect('vorraete.db')
         cur = conn.cursor()
         result = cur.execute("""SELECT quantity FROM vorraete where product = '""" + item.lower() + """'""")
         amount = result.fetchall()[0][0]
-
         cur.close()
         del cur
         conn.close()
+
         return self.makeresultsentence('getAmountOf', item, amount)
 
     # add entry to database
@@ -53,13 +54,15 @@ class Storage:
         :param item: Name of the entry, e.g. Tomaten, Spaghetti
         :param amount: how much we have (bought)
         :param least: how much has to be there at least at every point in time
-        :param reorder:
+        :param reorder: if amount is lower than least
         :param mhd:
         :return:
         """
 
-        # check if item is already in storage and if yes get its index
+        # check if item is already in storage and if yes just update the amount
         item = [item.value for item in intent_message.slots.item.all()][0]
+        amount = [item.value for item in intent_message.slots.amount.all()][0]
+
         conn = sqlite3.connect('vorraete.db')
         cur = conn.cursor()
         result = cur.execute("""SELECT quantity FROM vorraete where product = '""" + item.lower() + """'""")
@@ -71,11 +74,15 @@ class Storage:
                 cur.execute("""UPDATE vorraete SET quantity = '""" + str(amount) + """' WHERE product = '""" + item.lower() + """'""")
         except:
             # create a new db entry
-            amount = 1
+            product = item.lower()
+            least = 1
+            reorder = 1
+            mhd = '01.01.1900'
+            # amount = 1
+            storplc = 0
             with conn:
-                cur.execute("""INSERT INTO vorraete (product, least, reorder, mhd, quantity, storageplace) 
-                                 VALUES ('""" + item.lower() + """', 1, 0, '01.01.2020', """ + str(amount) + """, 0);""")
-
+                cur.execute("INSERT INTO vorraete (product, least, reorder, mhd, quantity, storageplace) VALUES (?, ?, ?, ?, ?, ?)", \
+                            (product, least, reorder, mhd, amount, storplc))
         cur.close()
         del cur
         conn.close()
@@ -84,12 +91,23 @@ class Storage:
     # delete entry from database
     def deleteItemFromVorraete(self, intent_message):
         """
-        if an entry should be deleted for good
+        if an item has been taken to be used, reduce its amount
         :param item:
         :return:
         """
-        item = [item.value for item in intent_message.slots.item.all()][0]
-        return self.makeresultsentence('deleteItemFromVorraete', item)
+        amount = [item.value for item in intent_message.slots.item.all()][0]
+        conn = sqlite3.connect('vorraete.db')
+        cur = conn.cursor()
+        amount += 1
+        with conn:
+            cur.execute("""UPDATE vorraete SET quantity = '""" + str(
+                amount) + """' WHERE product = '""" + amount.lower() + """'""")
+
+        cur.close()
+        del cur
+        conn.close()
+        
+        return self.makeresultsentence('deleteItemFromVorraete', amount)
 
     def makeresultsentence(self, caller, item, amount = None):
         resultsentence = 'Die Antwort ist leer.'
