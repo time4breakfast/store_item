@@ -40,7 +40,10 @@ class Storage:
         conn = sqlite3.connect('vorraete.db')
         cur = conn.cursor()
         result = cur.execute("""SELECT quantity FROM vorraete where product = '""" + item.lower() + """'""")
-        amount = result.fetchall()[0][0]
+        try:
+            amount = result.fetchall()[0][0]
+        except:
+            amount = 0
         cur.close()
         del cur
         conn.close()
@@ -61,7 +64,11 @@ class Storage:
 
         # check if item is already in storage and if yes just update the amount
         item = [item.value for item in intent_message.slots.item.all()][0]
-        amount = [item.value for item in intent_message.slots.amount.all()][0]
+        try:
+            amount = [item.value for item in intent_message.slots.amount.all()][0]
+        except:
+            amount = 1
+            print('amount not found')
 
         conn = sqlite3.connect('vorraete.db')
         cur = conn.cursor()
@@ -106,7 +113,7 @@ class Storage:
         cur.close()
         del cur
         conn.close()
-        
+
         return self.makeresultsentence('deleteItemFromVorraete', amount)
 
     def makeresultsentence(self, caller, item, amount = None):
